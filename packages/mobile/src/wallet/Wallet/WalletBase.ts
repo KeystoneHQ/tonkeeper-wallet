@@ -121,6 +121,10 @@ export class WalletBase {
     return this.config.type === WalletType.Ledger;
   }
 
+  public get isKeystone() {
+    return this.config.type === WalletType.Keystone;
+  }
+
   public isSupportedByContract(feature: WalletContractFeature) {
     return WalletContractFeatures[this.config.version][feature];
   }
@@ -133,7 +137,7 @@ export class WalletBase {
   }
 
   public get isExternal() {
-    return this.isSigner || this.isLedger;
+    return this.isSigner || this.isLedger || this.isKeystone;
   }
 
   public getLockupConfig() {

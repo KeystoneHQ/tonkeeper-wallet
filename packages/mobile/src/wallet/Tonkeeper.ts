@@ -365,6 +365,35 @@ export class Tonkeeper {
     );
   }
 
+  //Keystone Wallet only support v4r2 account for now
+  public async getKeystoneWalletInfo(pubkey: string) {
+    const tonapi = this.tonapi.mainnet;
+
+    const addresses = await Address.fromPubkey(pubkey, false);
+
+    if (!addresses) {
+      throw new Error("Can't parse pubkey");
+    }
+
+    const address = addresses[DEFAULT_WALLET_VERSION];
+
+    const accountBalance = await tonapi.accounts.getAccount(address.friendly);
+
+    const accountJetton = await tonapi.accounts.getAccountJettonsBalances({
+      accountId: address.friendly,
+    });
+
+    const wallet = {
+      pubkey,
+      version: DEFAULT_WALLET_VERSION,
+      address: address.friendly,
+      balance: accountBalance.balance,
+      tokens: accountJetton.balances.length > 0,
+    };
+
+    return [wallet];
+  }
+
   public async getWalletsInfo(pubkey: string, isTestnet: boolean, isMnemonic = false) {
     const tonapi = isTestnet ? this.tonapi.testnet : this.tonapi.mainnet;
 
@@ -511,6 +540,45 @@ export class Tonkeeper {
     await this.setWallet(walletsInstances[0]);
 
     return walletsInstances.map((item) => item.identifier);
+  }
+
+  public async addKeystoneWallet(
+    pubkey: string,
+    name?: string,
+    extra?: { xfp: string; path: string },
+  ) {
+    const addresses = await Address.fromPubkey(pubkey, false);
+
+    if (!addresses) {
+      throw new Error("Can't parse pubkey");
+    }
+    const identifier = uuidv4();
+
+    const walletName = name ?? this.getNewWalletName();
+
+    const rawAddress = addresses[DEFAULT_WALLET_VERSION].raw;
+
+    const workchain = Number(rawAddress.split(':')[0]);
+
+    const wallet: WalletConfig = {
+      ...DEFAULT_WALLET_STYLE_CONFIG,
+      name: walletName,
+      identifier,
+      network: WalletNetwork.mainnet,
+      type: WalletType.Keystone,
+      pubkey,
+      workchain,
+      version: DEFAULT_WALLET_VERSION,
+      keystone: extra,
+    };
+    await this.walletsStore.setAsync(({ wallets }) => ({
+      wallets: [...wallets, wallet],
+    }));
+
+    const walletsInstance = await this.createWalletInstance(wallet);
+    await this.setWallet(walletsInstance);
+
+    return [identifier];
   }
 
   public async addSignerWallet(

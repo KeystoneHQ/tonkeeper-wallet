@@ -46,6 +46,8 @@ import { RechargeByPromoModal } from '@tonkeeper/shared/modals/ActivityActionMod
 import { BatterySend } from '$core/BatterySend';
 import { SignerConfirmScreen, W5StoriesScreen } from '../screens';
 import { SendNew } from '$core/Send/new/Send';
+import { KeystoneScanQR } from '$core/KeystoneScanQR/KeystoneScanQR';
+import { PairKeystoneModal } from '$modals/PairKeystoneModal';
 
 const Stack = createModalStackNavigator(ProvidersWithNavigation);
 
@@ -92,6 +94,7 @@ export const ModalStack = React.memo(() => (
       <Stack.Modal component={LogoutWarningModal} path="/logout-warning" />
       <Stack.Modal component={RechargeByPromoModal} path="/recharge-by-promo" />
       <Stack.Modal component={PairLedgerModal} path="/pair-ledger" />
+      <Stack.Modal component={PairKeystoneModal} path="/pair-keystone" />
       <Stack.Modal component={BurnVouchersModal} path="/burn-vouchers" />
       <Stack.Modal
         component={W5StoriesScreen}
@@ -118,6 +121,7 @@ export const ModalStack = React.memo(() => (
       <Stack.Modal component={NFTSend} path={AppStackRouteNames.NFTSend} />
       <Stack.Modal component={BatterySend} path={AppStackRouteNames.BatterySend} />
       <Stack.Modal component={ScanQR} path={AppStackRouteNames.ScanQR} />
+      <Stack.Modal component={KeystoneScanQR} path={AppStackRouteNames.KeystoneScanQR} />
       <Stack.Modal component={SwapWithTheme} path={AppStackRouteNames.Swap} />
       <Stack.Modal
         component={CustomizeWallet}

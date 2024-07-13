@@ -114,12 +114,12 @@ export const KeystoneScanQR: FC<KeystoneScanQRProps> = ({ route }) => {
         } else {
           //alert error message
           await delay(400);
-          setDecoder(new URDecoder);
+          setDecoder(new URDecoder());
           scannerRef.current?.reactivate();
         }
       } else if (decoder.isError()) {
         await delay(400);
-        setDecoder(new URDecoder);
+        setDecoder(new URDecoder());
         scannerRef.current?.reactivate();
       }
     }

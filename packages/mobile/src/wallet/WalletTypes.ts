@@ -23,6 +23,7 @@ export enum WalletType {
   Signer = 'Signer',
   SignerDeeplink = 'SignerDeeplink',
   Ledger = 'Ledger',
+  Keystone = 'Keystone',
 }
 
 export enum WalletContractVersion {
@@ -125,6 +126,10 @@ export interface WalletConfig extends WalletStyleConfig {
     deviceId: string;
     deviceModel: string;
     accountIndex: number;
+  };
+  keystone?: {
+    xfp: string;
+    path: string;
   };
 }
 

@@ -1232,6 +1232,10 @@
     "ledger": {
       "title": "Pair with Ledger",
       "subtitle": "Hardware module, Bluetooth, limited TON features"
+    },
+    "keystone": {
+      "title": "Pair with Keystone",
+      "subtitle": "Hardware module, Bluetooth, limited TON features"
     }
   },
   "add_watch_only": {
@@ -1365,6 +1369,9 @@
     "install_ton_app": "Install TON App",
     "confirm_tx": "Confirm your transaction on Ledger",
     "operation_not_supported": "The operation is not available for Ledger wallets. Select another wallet and try again."
+  },
+  "keystone": {
+    "connect_title": "Connect Keystone"
   },
   "bluetooth": {
     "powered_off_alert": {

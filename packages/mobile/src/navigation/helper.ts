@@ -16,6 +16,8 @@ import { tk } from '$wallet';
 import { CreateWalletStackRouteNames } from './CreateWalletStack/types';
 import { ImportWalletStackRouteNames } from './ImportWalletStack/types';
 import { AddWatchOnlyStackRouteNames } from './AddWatchOnlyStack/types';
+import { UR } from '@keystonehq/keystone-sdk';
+import { KeystoneScanStatus } from '$core/KeystoneScanQR/KeystoneScanQR.interface';
 
 export function openExploreTab(initialCategory?: string) {
   navigate(BrowserStackRouteNames.Explore, { initialCategory });
@@ -66,6 +68,10 @@ export function openDAppBrowser(
 
 export function openScanQR(onScan: (url: string) => void) {
   navigate(AppStackRouteNames.ScanQR, { onScan });
+}
+
+export function openKeystoneScanQR(onScan: (ur: UR) => Promise<KeystoneScanStatus>) {
+  navigate(AppStackRouteNames.KeystoneScanQR, { onScan });
 }
 
 export function openSetupNotifications(identifiers: string[]) {
