@@ -48,6 +48,7 @@ import { SignerConfirmScreen, W5StoriesScreen } from '../screens';
 import { SendNew } from '$core/Send/new/Send';
 import { KeystoneScanQR } from '$core/KeystoneScanQR/KeystoneScanQR';
 import { PairKeystoneModal } from '$modals/PairKeystoneModal';
+import { KeystoneConfirmModal } from '$modals/KeystoneConfirmModal';
 
 const Stack = createModalStackNavigator(ProvidersWithNavigation);
 
@@ -128,6 +129,7 @@ export const ModalStack = React.memo(() => (
         path={AppStackRouteNames.CustomizeWallet}
       />
       <Stack.Modal component={SignerConfirmScreen} path="/signer-confirm" />
+      <Stack.Modal component={KeystoneConfirmModal} path="/keystone-confirm" />
     </Stack.Group>
     <Stack.Group behavior="fullScreenModal">
       <Stack.Modal

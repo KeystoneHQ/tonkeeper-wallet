@@ -1,7 +1,7 @@
 import { UR, UREncoder } from '@keystonehq/keystone-sdk';
 import { View, ViewStyle, deviceWidth, ns } from '@tonkeeper/uikit';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Animated, LayoutChangeEvent } from 'react-native';
+import { Animated, LayoutChangeEvent, StyleSheet } from 'react-native';
 import QRCode from 'react-native-qrcode-styled';
 import { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
@@ -41,15 +41,16 @@ export const KeystoneQRCode = ({ ur }: KeystoneQRCodeProps) => {
     [qrCodeScale],
   );
 
-  const qrStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: qrCodeScale.value }],
-  }));
-
   return (
     <View style={QR_WRAP_STYLE}>
-      <Animated.View style={qrStyle}>
-        <QRCode data={data} onLayout={handleQrCodeLayout} pieceSize={8} />
-      </Animated.View>
+        <QRCode data={data} padding={20} style={styles.qrcode} onLayout={handleQrCodeLayout} pieceSize={4} />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  qrcode: {
+    backgroundColor: '#FFF',
+    borderRadius: 16,
+  },
+});

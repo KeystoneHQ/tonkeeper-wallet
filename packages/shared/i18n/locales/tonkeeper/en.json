@@ -1371,7 +1371,9 @@
     "operation_not_supported": "The operation is not available for Ledger wallets. Select another wallet and try again."
   },
   "keystone": {
-    "connect_title": "Connect Keystone"
+    "confirm_title": "Confirm Action",
+    "connect_title": "Connect Keystone",
+    "scan": "Scan"
   },
   "bluetooth": {
     "powered_off_alert": {

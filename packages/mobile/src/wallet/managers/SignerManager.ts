@@ -15,6 +15,7 @@ import { TonTransport } from '@ton-community/ton-ledger';
 import { t } from '@tonkeeper/shared/i18n';
 import { getLastEnteredPasscode } from '$store/wallet/sagas';
 import { isAndroid } from '@tonkeeper/uikit';
+import { KeystoneMessageType } from '$modals/KeystoneConfirmModal';
 
 let ledgerConfirmModalRef: FC<any> | null = null;
 
@@ -165,6 +166,31 @@ export class SignerManager {
     return body;
   }
 
+  public async signWithKeystone(
+    message: Cell,
+    messageType?: KeystoneMessageType,
+  ): Promise<Buffer> {
+    const hexSignature = await new Promise<string>((resolve, reject) => {
+      this.signerPromise = { resolve, reject };
+
+      navigation.push('/keystone-confirm', {
+        walletIdentifier: this.config.identifier,
+        message: message.toBoc({ idx: false }),
+        messageType: messageType ?? 'transaction',
+        onDone: (signature: string) => {
+          resolve(signature);
+        },
+        onClose: () => {
+          this.signerPromise = null;
+
+          reject(new CanceledActionError());
+        },
+      });
+    });
+
+    return Buffer.from(hexSignature, 'hex');
+  }
+
   private createSignerDeeplink(message: Cell, addReturn?: boolean) {
     const body = message.toBoc({ idx: false }).toString('hex');
 
@@ -210,6 +236,10 @@ export class SignerManager {
 
     if (this.config.type === WalletType.Ledger) {
       throw new SignerError(t('ledger.operation_not_supported'));
+    }
+
+    if (this.config.type === WalletType.Keystone) {
+      return this.signWithKeystone.bind(this);
     }
 
     return this.signWithMnemonic.bind(this);
