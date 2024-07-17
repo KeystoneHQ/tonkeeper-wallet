@@ -11,6 +11,7 @@ export enum AppStackRouteNames {
   Send = 'Send',
   ChooseCountry = 'ChooseCountry',
   ScanQR = 'ScanQR',
+  KeystoneScanQR = 'KeystoneScanQR',
   RequireWalletModal = 'RequireWalletModal',
   NFTSend = 'NFTSend',
   BatterySend = 'BatterySend',

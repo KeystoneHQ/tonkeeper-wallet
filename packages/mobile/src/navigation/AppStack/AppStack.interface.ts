@@ -4,7 +4,9 @@ import { CryptoCurrency } from '$shared/constants';
 import { SendAnalyticsFrom, SubscriptionModel } from '$store/models';
 import { NFTKeyPair } from '$store/nfts/interface';
 import { CurrencyAdditionalParams, TokenType } from '$core/Send/Send.interface';
+import {UR} from '@keystonehq/keystone-sdk';
 import {CustomFeeCurrency} from "$core/Send/new/core/useSendCore";
+import { KeystoneScanStatus } from '$core/KeystoneScanQR/KeystoneScanQR.interface';
 
 export type AppStackParamList = {
   [AppStackRouteNames.MainStack]: {};
@@ -38,6 +40,9 @@ export type AppStackParamList = {
   };
   [AppStackRouteNames.ScanQR]: {
     onScan: (url: string) => boolean | Promise<boolean>;
+  };
+  [AppStackRouteNames.KeystoneScanQR]: {
+    onScan: (ur: UR) => Promise<KeystoneScanStatus>;
   };
   [AppStackRouteNames.Subscription]: {
     subscription: SubscriptionModel;
