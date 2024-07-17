@@ -70,8 +70,8 @@ export function openScanQR(onScan: (url: string) => void) {
   navigate(AppStackRouteNames.ScanQR, { onScan });
 }
 
-export function openKeystoneScanQR(onScan: (ur: UR) => Promise<KeystoneScanStatus>) {
-  navigate(AppStackRouteNames.KeystoneScanQR, { onScan });
+export function openKeystoneScanQR(onScan: (ur: UR) => Promise<KeystoneScanStatus>, onSuccess: (ur: UR) => void) {
+  navigate(AppStackRouteNames.KeystoneScanQR, { onScan, onSuccess });
 }
 
 export function openSetupNotifications(identifiers: string[]) {

@@ -20,7 +20,7 @@ export const QR_WRAP_STYLE: ViewStyle = {
 
 export const KeystoneQRCode = ({ ur }: KeystoneQRCodeProps) => {
   const encoder = useMemo(() => {
-    return new UREncoder(ur, 400);
+    return new UREncoder(ur, 200);
   }, [ur]);
   const [data, setData] = useState(encoder.nextPart().toUpperCase());
   useEffect(() => {

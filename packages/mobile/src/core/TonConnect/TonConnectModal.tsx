@@ -32,6 +32,9 @@ import { replaceString } from '@tonkeeper/shared/utils/replaceString';
 import { tk } from '$wallet';
 import { WalletListItem } from '@tonkeeper/shared/components';
 import { useWallets } from '@tonkeeper/shared/hooks';
+import { SignedProof } from '$wallet/managers/TonProofManager.interface';
+import { isUnsignedTonProofItem } from '$tonconnect/ConnectReplyBuilder.interface';
+import { ConnectItemReply } from '@tonconnect/protocol';
 
 export const TonConnectModal = (props: TonConnectModalProps) => {
   const { isInternalBrowser, replyBuilder, requestPromise, manifest } = props;
@@ -41,13 +44,16 @@ export const TonConnectModal = (props: TonConnectModalProps) => {
   const theme = useTheme();
   const nav = useNavigation();
   const [selectedWalletIdentifier, setSelectedWalletIdentifier] = React.useState<string>(
-    tk.wallet.isWatchOnly || tk.wallet.isExternal
+    (tk.wallet.isWatchOnly || tk.wallet.isExternal) && !tk.wallet.isKeystone
       ? tk.walletForUnlock.identifier
       : tk.wallet.identifier,
   );
   const allWallets = useWallets();
   const selectableWallets = useMemo(
-    () => allWallets.filter((wallet) => !wallet.isWatchOnly && !wallet.isExternal),
+    () =>
+      allWallets.filter(
+        (wallet) => (!wallet.isWatchOnly && !wallet.isExternal) || wallet.isKeystone,
+      ),
     [allWallets],
   );
   const wallet = useMemo(
@@ -77,38 +83,90 @@ export const TonConnectModal = (props: TonConnectModalProps) => {
     try {
       animation.startLoading();
 
-      const vault = await unlockVault(wallet.identifier);
-      const privateKey = await vault.getTonPrivateKey();
-      const publicKey = Buffer.from(wallet.pubkey, 'hex');
+      if (wallet.isKeystone) {
+        const address = wallet.address.ton.friendly;
 
-      const address = wallet.address.ton.friendly;
+        const stateInit = ContractService.getStateInit(wallet.contract);
 
-      await animation.showSuccess(() => {
-        triggerNotificationSuccess();
-      }, !isInternalBrowser);
+        const publicKey = Buffer.from(wallet.pubkey, 'hex');
 
-      const stateInit = ContractService.getStateInit(wallet.contract);
+        const replyItems = await replyBuilder.createReplyItemsWithHardware(
+          address,
+          publicKey,
+          stateInit,
+          wallet.isTestnet,
+        );
 
-      const replyItems = await replyBuilder.createReplyItems(
-        address,
-        privateKey,
-        publicKey,
-        stateInit,
-        wallet.isTestnet,
-      );
+        if (withNotifications && !wallet.tonProof.tonProofToken) {
+          const proof = await wallet.tonProof.createUnsignedProof(publicKey);
+          if (proof === null) throw new Error('Invalid state');
+          const signature = await wallet.signer.signBufferWithKeystone(
+            proof.messageBuffer,
+            'ton-proof',
+          );
+          const signedProof: SignedProof = Object.assign(
+            {},
+            { ...proof },
+            { proof: { ...proof.proof, signature: signature.toString('base64') } },
+          );
+          await wallet.tonProof.acceptSignedProof(signedProof);
+        }
+        for (const item of replyItems) {
+          if (isUnsignedTonProofItem(item)) {
+            const signature = await wallet.signer.signBufferWithKeystone(
+              item.messageBuffer,
+              'ton-proof',
+            );
+            item.proof['signature'] = signature.toString('base64');
+          }
+        }
 
-      if (withNotifications && !wallet.tonProof.tonProofToken) {
-        await wallet.tonProof.obtainProof(await vault.getKeyPair());
+        await animation.showSuccess(() => {
+          triggerNotificationSuccess();
+        }, !isInternalBrowser);
+
+        requestPromise.resolve({
+          address,
+          replyItems: replyItems as ConnectItemReply[],
+          notificationsEnabled: withNotifications,
+          walletIdentifier: wallet.identifier,
+        });
+
+        closeModal();
+      } else {
+        const vault = await unlockVault(wallet.identifier);
+        const privateKey = await vault.getTonPrivateKey();
+        const publicKey = Buffer.from(wallet.pubkey, 'hex');
+
+        const address = wallet.address.ton.friendly;
+
+        await animation.showSuccess(() => {
+          triggerNotificationSuccess();
+        }, !isInternalBrowser);
+
+        const stateInit = ContractService.getStateInit(wallet.contract);
+
+        const replyItems = await replyBuilder.createReplyItems(
+          address,
+          privateKey,
+          publicKey,
+          stateInit,
+          wallet.isTestnet,
+        );
+
+        if (withNotifications && !wallet.tonProof.tonProofToken) {
+          await wallet.tonProof.obtainProof(await vault.getKeyPair());
+        }
+
+        requestPromise.resolve({
+          address,
+          replyItems,
+          notificationsEnabled: withNotifications,
+          walletIdentifier: wallet.identifier,
+        });
+
+        closeModal();
       }
-
-      requestPromise.resolve({
-        address,
-        replyItems,
-        notificationsEnabled: withNotifications,
-        walletIdentifier: wallet.identifier,
-      });
-
-      closeModal();
     } catch (error) {
       animation.revert();
       let message = error?.message;

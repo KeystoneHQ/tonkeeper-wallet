@@ -46,7 +46,7 @@ export const useDAppBridge = (walletAddress: string, webViewUrl: string) => {
       protocolVersion: CURRENT_PROTOCOL_VERSION,
       isWalletBrowser: true,
       connect: async (protocolVersion, request) => {
-        if (tk.wallet.isExternal || tk.wallet.isWatchOnly) {
+        if ((tk.wallet.isExternal || tk.wallet.isWatchOnly) && !tk.wallet.isKeystone) {
           return new ConnectEventError(
             CONNECT_EVENT_ERROR_CODES.METHOD_NOT_SUPPORTED,
             '',

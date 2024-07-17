@@ -14,6 +14,58 @@ export interface TonProofArgs {
   payload: string;
 }
 
+export async function createUnsignedTonProof({
+  address: _addr,
+  payload,
+  walletStateInit,
+  domain,
+}) {
+  try {
+    const address = Address.parse(_addr).toRaw();
+    const timestamp = await getRawTimeFromLiteserverSafely();
+    const timestampBuffer = new Int64LE(timestamp).toBuffer();
+
+    const domainBuffer = Buffer.from(domain);
+    const domainLengthBuffer = Buffer.allocUnsafe(4);
+    domainLengthBuffer.writeInt32LE(domainBuffer.byteLength);
+
+    const [workchain, addrHash] = address.split(':');
+
+    const addressWorkchainBuffer = Buffer.allocUnsafe(4);
+    addressWorkchainBuffer.writeInt32BE(Number(workchain));
+
+    const addressBuffer = Buffer.concat([
+      addressWorkchainBuffer,
+      Buffer.from(addrHash, 'hex'),
+    ]);
+
+    const messageBuffer = Buffer.concat([
+      Buffer.from('ton-proof-item-v2/'),
+      addressBuffer,
+      domainLengthBuffer,
+      domainBuffer,
+      timestampBuffer,
+      Buffer.from(payload),
+    ]);
+
+    return {
+      address,
+      proof: {
+        timestamp,
+        domain: {
+          length_bytes: domainBuffer.byteLength,
+          value: domain,
+        },
+        payload,
+        state_init: walletStateInit,
+      },
+      messageBuffer: messageBuffer,
+    };
+  } catch (e) {
+    throw new Error('Failed to create proof');
+  }
+}
+
 export async function createTonProof({
   address: _addr,
   payload,
@@ -77,6 +129,19 @@ export async function createTonProof({
   } catch (e) {
     throw new Error('Failed to create proof');
   }
+}
+
+export async function createUnsignedSignProofForHardware(
+  addressRaw: string,
+  payload: string,
+  walletStateInit: string,
+) {
+  return createUnsignedTonProof({
+    address: addressRaw,
+    payload,
+    walletStateInit,
+    domain: 'tonkeeper.com',
+  });
 }
 
 export async function signProofForTonkeeper(

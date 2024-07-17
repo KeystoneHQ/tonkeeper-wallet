@@ -43,6 +43,7 @@ export type AppStackParamList = {
   };
   [AppStackRouteNames.KeystoneScanQR]: {
     onScan: (ur: UR) => Promise<KeystoneScanStatus>;
+    onSuccess: (ur: UR) => void;
   };
   [AppStackRouteNames.Subscription]: {
     subscription: SubscriptionModel;

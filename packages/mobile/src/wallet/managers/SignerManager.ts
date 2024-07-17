@@ -166,18 +166,17 @@ export class SignerManager {
     return body;
   }
 
-  public async signWithKeystone(
-    message: Cell,
-    messageType?: KeystoneMessageType,
-  ): Promise<Buffer> {
+  public async signBufferWithKeystone(message: Buffer, messageType: KeystoneMessageType) {
     const hexSignature = await new Promise<string>((resolve, reject) => {
       this.signerPromise = { resolve, reject };
 
       navigation.push('/keystone-confirm', {
         walletIdentifier: this.config.identifier,
-        message: message.toBoc({ idx: false }),
-        messageType: messageType ?? 'transaction',
+        message: message,
+        messageType: messageType,
         onDone: (signature: string) => {
+          this.signerPromise = null;
+          
           resolve(signature);
         },
         onClose: () => {
@@ -189,6 +188,10 @@ export class SignerManager {
     });
 
     return Buffer.from(hexSignature, 'hex');
+  }
+
+  public async signWithKeystone(message: Cell): Promise<Buffer> {
+    return this.signBufferWithKeystone(message.toBoc({ idx: false }), 'transaction');
   }
 
   private createSignerDeeplink(message: Cell, addReturn?: boolean) {

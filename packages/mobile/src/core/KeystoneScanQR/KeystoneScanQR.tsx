@@ -27,11 +27,12 @@ import { t } from '@tonkeeper/shared/i18n';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import { DarkTheme } from '@tonkeeper/uikit/src/styles/themes/dark';
 import { useTheme } from '@tonkeeper/uikit';
-import { URDecoder, UREncoder } from '@keystonehq/keystone-sdk';
+import { URDecoder } from '@keystonehq/keystone-sdk';
 
 export const KeystoneScanQR: FC<KeystoneScanQRProps> = ({ route }) => {
   const nav = useNavigation();
   const onScan = route.params.onScan;
+  const onSuccess = route.params.onSuccess;
   const scannerRef = useRef<QRCodeScanner>(null);
 
   const theme = useTheme();
@@ -111,6 +112,7 @@ export const KeystoneScanQR: FC<KeystoneScanQRProps> = ({ route }) => {
         if (status.state === KeystoneScanState.SUCCESS) {
           triggerNotificationSuccess();
           nav.goBack();
+          onSuccess(ur);
         } else {
           //alert error message
           await delay(400);
@@ -124,6 +126,7 @@ export const KeystoneScanQR: FC<KeystoneScanQRProps> = ({ route }) => {
       }
     }
   };
+
 
   function renderContent() {
     if (isCameraBlocked) {

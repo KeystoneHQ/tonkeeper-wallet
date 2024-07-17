@@ -1,17 +1,8 @@
-import { Button, Modal, Steezy, Toast, View } from '@tonkeeper/uikit';
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { LedgerConnectionSteps } from '$components';
+import { Button, Modal, Steezy, View } from '@tonkeeper/uikit';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { t } from '@tonkeeper/shared/i18n';
-import { LedgerConnectionCurrentStep } from 'components/LedgerConnectionSteps/types';
 import { useNavigation } from '@tonkeeper/router';
-import { useBluetoothAvailable, useConnectLedger } from '../ledger';
-import {
-  LedgerTransaction,
-  setLedgerConfirmModalRef,
-} from '$wallet/managers/SignerManager';
-import { Address, Cell } from '@ton/core';
 import { tk } from '$wallet';
-import { getLedgerAccountPathByIndex } from '$utils/ledger';
 import { KeystoneQRCode } from '$core/KeystoneQRCode/KeystoneQRCode';
 import KeystoneSDK, { UR } from '@keystonehq/keystone-sdk';
 import { KeystoneScanState } from '$core/KeystoneScanQR/KeystoneScanQR.interface';
@@ -35,6 +26,14 @@ export const KeystoneConfirmModal: FC<Props> = (props) => {
   const path = wallet.config.keystone?.path;
   const xfp = wallet.config.keystone?.xfp;
   const address = wallet.address.ton.friendly;
+
+  const [signed, setSigned] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (!signed) onClose();
+    };
+  }, []);
 
   const keystoneSdk = useMemo(() => {
     return new KeystoneSDK({ origin: 'Tonkeeper Mobile' });
@@ -60,19 +59,26 @@ export const KeystoneConfirmModal: FC<Props> = (props) => {
           errorMessage: 'invalid qrcode type',
         };
       }
-      const signature = keystoneSdk.ton.parseSignature(ur);
-      onDone(signature.signature);
-      nav.closeModal && nav.closeModal();
       return {
         state: KeystoneScanState.SUCCESS,
         errorMessage: '',
       };
     },
-    [keystoneSdk],
+    [keystoneSdk, setSigned],
+  );
+
+  const onSuccess = useCallback(
+    async (ur: UR) => {
+      setSigned(true);
+      const signature = keystoneSdk.ton.parseSignature(ur);
+      nav.goBack();
+      onDone(signature.signature);
+    },
+    [keystoneSdk, setSigned],
   );
 
   const handleContinue = useCallback(() => {
-    openKeystoneScanQR(handleScanResult);
+    openKeystoneScanQR(handleScanResult, onSuccess);
   }, [handleScanResult]);
 
   return (
