@@ -201,6 +201,8 @@ export type IconNames =
   | 'ic-loader-large-32'
   | 'ic-loader-medium-24'
   | 'ic-loader-xlarge-64'
+  | 'ic-keystone-28'
+  | 'ic-keystone-112'
   | 'ic-arrow-2-circlepath-28';
 
 export const AllIcons = [
@@ -548,6 +550,8 @@ export const IconSizes = {
   'ic-testnet-28': 28,
   'ic-testnet-outline-28': 28,
   'ic-ticket-28': 28,
+  'ic-keystone-28': 28,
+  'ic-keystone-112': 112,
   'ic-ton-28': 28,
   'ic-tonkeeper-28': 28,
   'ic-trash-bin-28': 28,

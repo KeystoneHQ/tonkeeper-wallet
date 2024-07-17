@@ -101,6 +101,8 @@ export const IconList = {
   'ic-jetton-28': require('../../../assets/icons/png/ic-jetton-28.png'),
   'ic-key-28': require('../../../assets/icons/png/ic-key-28.png'),
   'ic-ledger-28': require('../../../assets/icons/png/ic-ledger-28.png'),
+  'ic-keystone-28': require('../../../assets/icons/png/ic-keystone-28.png'),
+  'ic-keystone-112': require('../../../assets/icons/png/ic-keystone-112.png'),
   'ic-link-28': require('../../../assets/icons/png/ic-link-28.png'),
   'ic-lock-28': require('../../../assets/icons/png/ic-lock-28.png'),
   'ic-magnifying-glass-28': require('../../../assets/icons/png/ic-magnifying-glass-28.png'),

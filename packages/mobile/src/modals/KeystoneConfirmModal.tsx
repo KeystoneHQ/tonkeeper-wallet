@@ -1,4 +1,4 @@
-import { Button, Modal, Steezy, View } from '@tonkeeper/uikit';
+import { Button, Modal, Steezy, View, Text } from '@tonkeeper/uikit';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { t } from '@tonkeeper/shared/i18n';
 import { useNavigation } from '@tonkeeper/router';
@@ -83,13 +83,21 @@ export const KeystoneConfirmModal: FC<Props> = (props) => {
 
   return (
     <Modal>
-      <Modal.Header title={t('keystone.confirm_title')} />
+      <Modal.Header />
       <Modal.Content safeArea>
+        <View style={styles.textContainer}>
+          <Text color='textPrimary' type='h3'>{t('keystone.connect_title')}</Text>
+          <Text color='textSecondary' textAlign='center'>{t('keystone.connect_hint')}</Text>
+        </View>
         <View style={styles.container}>
           <KeystoneQRCode ur={ur} />
         </View>
         <View style={styles.buttonsContainer}>
-          <Button onPress={handleContinue} color="secondary" title={t('keystone.scan')} />
+          <Button
+            onPress={handleContinue}
+            color="secondary"
+            title={t('keystone.scan_signed_transaction')}
+          />
         </View>
       </Modal.Content>
     </Modal>
@@ -102,6 +110,11 @@ const styles = Steezy.create(() => ({
   container: {
     marginHorizontal: 16,
     alignItems: 'center',
+  },
+  textContainer: {
+    marginVertical: 16,
+    alignItems: 'center',
+    flexDirection: 'column',
   },
   buttonsContainer: {
     padding: 16,

@@ -135,6 +135,21 @@ export const AddWalletModal = memo<AddWalletModalProps>(({ isTonConnect, isImpor
                 />
               </List>
             ) : null}
+            {!isTonConnect && !getFlag('disable_keystone') ? (
+              <List style={styles.list}>
+                <List.Item
+                  onPress={() => {
+                    nav.replaceModal('/pair-keystone');
+                  }}
+                  leftContentStyle={styles.iconContainer}
+                  leftContent={<Icon name="ic-keystone-28" color="accentBlue" />}
+                  title={t('add_wallet_modal.keystone.title')}
+                  subtitle={t('add_wallet_modal.keystone.subtitle')}
+                  subtitleNumberOfLines={3}
+                  chevron
+                />
+              </List>
+            ) : null}
             {!isTonConnect && !getFlag('disable_ledger') ? (
               <List style={styles.list}>
                 <List.Item
@@ -145,21 +160,6 @@ export const AddWalletModal = memo<AddWalletModalProps>(({ isTonConnect, isImpor
                   leftContent={<Icon name="ic-ledger-28" color="accentBlue" />}
                   title={t('add_wallet_modal.ledger.title')}
                   subtitle={t('add_wallet_modal.ledger.subtitle')}
-                  subtitleNumberOfLines={3}
-                  chevron
-                />
-              </List>
-            ) : null}
-            {!isTonConnect && !getFlag('disable_ledger') ? (
-              <List style={styles.list}>
-                <List.Item
-                  onPress={() => {
-                    nav.replaceModal('/pair-keystone');
-                  }}
-                  leftContentStyle={styles.iconContainer}
-                  leftContent={<Icon name="ic-ledger-28" color="accentBlue" />}
-                  title={t('add_wallet_modal.keystone.title')}
-                  subtitle={t('add_wallet_modal.keystone.subtitle')}
                   subtitleNumberOfLines={3}
                   chevron
                 />

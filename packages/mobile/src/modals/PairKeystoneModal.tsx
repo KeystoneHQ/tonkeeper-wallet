@@ -1,4 +1,4 @@
-import { Button, Modal, Spacer, Steezy, View } from '@tonkeeper/uikit';
+import { Button, Icon, Modal, Spacer, Steezy, View, Text } from '@tonkeeper/uikit';
 import { FC, useCallback, useMemo } from 'react';
 import { t } from '@tonkeeper/shared/i18n';
 import { useNavigation } from '@tonkeeper/router';
@@ -78,8 +78,13 @@ export const PairKeystoneModal: FC<Props> = () => {
   }, [handleScanResult]);
   return (
     <Modal>
-      <Modal.Header title={t('keystone.connect_title')} />
+      <Modal.Header/>
       <Modal.Content safeArea>
+        <View style={styles.contentContainer}>
+          <Icon name="ic-keystone-112" color="accentBlue" />
+          <Text color='textPrimary' type='h3'>{t('add_wallet_modal.keystone.title')}</Text>
+          <Text color='textSecondary' textAlign='center'>{t('add_wallet_modal.keystone.subtitle')}</Text>
+        </View>
         <View style={styles.buttonsContainer}>
           <View style={styles.button}>
             <Button onPress={nav.closeModal} color="secondary" title={t('cancel')} />
@@ -101,6 +106,11 @@ const styles = Steezy.create(() => ({
   buttonsContainer: {
     flexDirection: 'row',
     padding: 16,
+  },
+  contentContainer: {
+    flexDirection: 'column',
+    padding: 16,
+    alignItems: 'center',
   },
   button: {
     flex: 1,

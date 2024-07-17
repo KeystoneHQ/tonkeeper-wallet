@@ -1235,7 +1235,7 @@
     },
     "keystone": {
       "title": "Pair with Keystone",
-      "subtitle": "Hardware module, Bluetooth, limited TON features"
+      "subtitle": "A higher level of security with AIR-GAP hardware wallet"
     }
   },
   "add_watch_only": {
@@ -1371,9 +1371,9 @@
     "operation_not_supported": "The operation is not available for Ledger wallets. Select another wallet and try again."
   },
   "keystone": {
-    "confirm_title": "Confirm Action",
     "connect_title": "Connect Keystone",
-    "scan": "Scan"
+    "scan_signed_transaction": "Scan Signed Transaction",
+    "connect_hint": "Please open Keystone and scan QR code with transaction"
   },
   "bluetooth": {
     "powered_off_alert": {
