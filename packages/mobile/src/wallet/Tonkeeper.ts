@@ -1,6 +1,7 @@
 import { Storage } from '@tonkeeper/core/src/declarations/Storage';
 import { Wallet } from '$wallet/Wallet';
 import { Address } from '@tonkeeper/core/src/formatters/Address';
+import { Address as CoreAddress } from '@ton/core';
 import { TonAPI } from '@tonkeeper/core/src/TonAPI';
 import { TonPriceManager } from './managers/TonPriceManager';
 import { State } from '@tonkeeper/core/src/utils/State';
@@ -145,7 +146,7 @@ export class Tonkeeper {
   }
 
   public get walletForUnlock() {
-    if (this.wallet && !this.wallet.isWatchOnly && !this.wallet.isExternal) {
+    if (this.wallet && !this.wallet.isWatchOnly && !this.wallet.isExternal || this.wallet.isKeystone) {
       return this.wallet;
     }
 
@@ -367,22 +368,17 @@ export class Tonkeeper {
 
   //Keystone Wallet only support v4r2 account for now
   public async getKeystoneWalletInfo(pubkey: string) {
-    const tonapi = this.tonapi.mainnet;
-
     const addresses = await Address.fromPubkey(pubkey, false);
-
     if (!addresses) {
       throw new Error("Can't parse pubkey");
     }
 
     const address = addresses[DEFAULT_WALLET_VERSION];
-
-    const accountBalance = await tonapi.accounts.getAccount(address.friendly);
-
-    const accountJetton = await tonapi.accounts.getAccountJettonsBalances({
-      accountId: address.friendly,
+    const rawAddress = CoreAddress.parse(address.friendly).toRawString();
+    const accountBalance = await this.tonapi.mainnet.accounts.getAccount(rawAddress);
+    const accountJetton = await this.tonapi.mainnet.accounts.getAccountJettonsBalances({
+      accountId: rawAddress
     });
-
     const wallet = {
       pubkey,
       version: DEFAULT_WALLET_VERSION,

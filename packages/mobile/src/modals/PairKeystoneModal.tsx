@@ -40,35 +40,39 @@ export const PairKeystoneModal: FC<Props> = () => {
   const onSuccess = useCallback(
     async (ur: UR) => {
       const account = keystoneSdk.parseTonAccount(ur);
-      const walletsInfo = await tk.getKeystoneWalletInfo(account.publicKey);
-      nav.goBack();
-      InteractionManager.runAfterInteractions(() => {
-        nav.navigate(MainStackRouteNames.ImportWalletStack, {
-          screen: ImportWalletStackRouteNames.ConfirmKeystoneWallet,
-          params: {
-            walletsInfo,
-            onDone: async () => {
-              const extra =
-                !!account.xfp && !!account.path
-                  ? { xfp: account.xfp, path: account.path }
-                  : undefined;
-              const identifiers = await tk.addKeystoneWallet(
-                account.publicKey,
-                account.name,
-                extra,
-              );
+      try {
+        const walletsInfo = await tk.getKeystoneWalletInfo(account.publicKey);
+        nav.goBack();
+        InteractionManager.runAfterInteractions(() => {
+          nav.navigate(MainStackRouteNames.ImportWalletStack, {
+            screen: ImportWalletStackRouteNames.ConfirmKeystoneWallet,
+            params: {
+              walletsInfo,
+              onDone: async () => {
+                const extra =
+                  !!account.xfp && !!account.path
+                    ? { xfp: account.xfp, path: account.path }
+                    : undefined;
+                const identifiers = await tk.addKeystoneWallet(
+                  account.publicKey,
+                  account.name,
+                  extra,
+                );
 
-              const isNotificationsDenied = await tk.wallet.notifications.getIsDenied();
+                const isNotificationsDenied = await tk.wallet.notifications.getIsDenied();
 
-              if (isNotificationsDenied) {
-                openSetupWalletDone(identifiers);
-              } else {
-                openSetupNotifications(identifiers);
-              }
+                if (isNotificationsDenied) {
+                  openSetupWalletDone(identifiers);
+                } else {
+                  openSetupNotifications(identifiers);
+                }
+              },
             },
-          },
+          });
         });
-      });
+      } catch (e) {
+      } finally {
+      }
     },
     [keystoneSdk],
   );
