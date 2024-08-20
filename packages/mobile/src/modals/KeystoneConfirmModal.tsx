@@ -104,8 +104,6 @@ export const KeystoneConfirmModal: FC<Props> = (props) => {
   );
 };
 
-// setLedgerConfirmModalRef(KeystoneConfirmModal);
-
 const styles = Steezy.create(() => ({
   container: {
     marginHorizontal: 16,

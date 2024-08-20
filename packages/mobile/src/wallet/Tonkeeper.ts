@@ -571,6 +571,15 @@ export class Tonkeeper {
       version: DEFAULT_WALLET_VERSION,
       keystone: extra,
     };
+
+    const hasWallet = await this.walletsStore.data.wallets.find(
+      (_wallet) => _wallet.pubkey === wallet.pubkey,
+    );
+
+    if (!!hasWallet) {
+      return [identifier];
+    }
+
     await this.walletsStore.setAsync(({ wallets }) => ({
       wallets: [...wallets, wallet],
     }));
